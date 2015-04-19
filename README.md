@@ -40,11 +40,13 @@ Variable        | Description                       | Example
  {TTTT}         | Purge time code                   | 0030
  {JJJHHMM}      | Date code                         | 1051700
  {LLLLLLLL}     | Originator code                   | KEAX/NWS
- {LOCATION}     | Location code                     | US
+ {COUNTRY}      | Location code                     | US
  {organization} | Organization name                 | National Weather Service
+ {location}     | Originator location               | Pleasant Hill, Missouri
  {event}        | Event type                        | Required Weekly Test
  {start}        | Start time                        | 12:00 PM
  {end}          | End time                          | 12:30 PM
+ {length}       | Length of event                   | 30 minutes
  {date}         | Local date                        | 04/15/15 12:00:38
  
 ###Sample Usage
