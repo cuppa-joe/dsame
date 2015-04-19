@@ -41,14 +41,14 @@ def time_str(x, type='hour'):
     elif x>=2:
         return ''.join([str(x),' ',type,'s'])
     
-def hhmm_decode(input):
-    hh,mm=input[:2],input[2:]  
+def get_length(TTTT):
+    hh,mm=TTTT[:2],TTTT[2:]  
     return ' '.join(filter(None, (time_str(int(hh)), time_str(int(mm), type='minute'))))
 
-def county_decode(input, LOCATION):
+def county_decode(input, COUNTRY):
     """Convert SAME county/geographic code to text list"""
     P, SS, CCC, SSCCC=input[:1], input[1:3], input[3:], input[1:]
-    if LOCATION=='US':
+    if COUNTRY=='US':
         if SSCCC in defs.SAME_CTYB:
             SAME__LOC=defs.SAME_LOCB
         else:
@@ -65,8 +65,8 @@ def county_decode(input, LOCATION):
             county=defs.CA_SAME_CODE[SSCCC]
         return [county, defs.CA_SAME_AREA[SS]]
 
-def get_division(input, LOCATION='US'):
-    if LOCATION=='US':
+def get_division(input, COUNTRY='US'):
+    if COUNTRY=='US':
         try:
             DIVISION=defs.FIPS_DIVN[input]
             if not DIVISION:
@@ -118,19 +118,19 @@ def check_watch(watch_list, PSSCCC_list, event_list, EEE):
     else:
         return False
 
-def format_message(command, ORG='WXR',EEE='RWT',PSSCCC=[],TTTT='0030',JJJHHMM='0010000',STATION=None, TYPE=None, LLLLLLLL=None, LOCATION='US', LANG='EN', **kwargs):
-    return command.format(ORG=ORG, EEE=EEE, TTTT=TTTT, JJJHHMM=JJJHHMM, STATION=STATION, TYPE=TYPE, LLLLLLLL=LLLLLLLL, LOCATION=LOCATION, LANG=LANG, event=get_event(EEE), end=fn_dt(alert_end(JJJHHMM,TTTT)), start=fn_dt(alert_start(JJJHHMM)), organization=defs.SAME__ORG[ORG]['NAME'][LOCATION], PSSCCC='-'.join(PSSCCC), location=get_location(STATION, TYPE), date=fn_dt(datetime.datetime.now(),'%c'), **kwargs)
+def format_message(command, ORG='WXR',EEE='RWT',PSSCCC=[],TTTT='0030',JJJHHMM='0010000',STATION=None, TYPE=None, LLLLLLLL=None, COUNTRY='US', LANG='EN', **kwargs):
+    return command.format(ORG=ORG, EEE=EEE, TTTT=TTTT, JJJHHMM=JJJHHMM, STATION=STATION, TYPE=TYPE, LLLLLLLL=LLLLLLLL, COUNTRY=COUNTRY, LANG=LANG, event=get_event(EEE), end=fn_dt(alert_end(JJJHHMM,TTTT)), start=fn_dt(alert_start(JJJHHMM)), organization=defs.SAME__ORG[ORG]['NAME'][COUNTRY], PSSCCC='-'.join(PSSCCC), location=get_location(STATION, TYPE), date=fn_dt(datetime.datetime.now(),'%c'), length=get_length(TTTT), **kwargs)
        
-def readable_message(ORG='WXR',EEE='RWT',PSSCCC=[],TTTT='0030',JJJHHMM='0010000',STATION=None, TYPE=None, LLLLLLLL=None, LOCATION='US', LANG='EN'):
+def readable_message(ORG='WXR',EEE='RWT',PSSCCC=[],TTTT='0030',JJJHHMM='0010000',STATION=None, TYPE=None, LLLLLLLL=None, COUNTRY='US', LANG='EN'):
     import textwrap
     printf()
     location=get_location(STATION, TYPE)
-    MSG=[format_message(defs.MSG__TEXT[LANG]['MSG1'], ORG=ORG, TTTT=TTTT, JJJHHMM=JJJHHMM, STATION=STATION, TYPE=TYPE, LOCATION=LOCATION, LANG=LANG, article=defs.MSG__TEXT[LANG][defs.SAME__ORG[ORG]['ARTICLE'][LOCATION]].title(), has=defs.MSG__TEXT[LANG]['HAS'] if not defs.SAME__ORG[ORG]['PLURAL'] else defs.MSG__TEXT[LANG]['HAVE'], preposition=defs.MSG__TEXT[LANG]['IN'] if location !='' else '')]
+    MSG=[format_message(defs.MSG__TEXT[LANG]['MSG1'], ORG=ORG, TTTT=TTTT, JJJHHMM=JJJHHMM, STATION=STATION, TYPE=TYPE, COUNTRY=COUNTRY, LANG=LANG, article=defs.MSG__TEXT[LANG][defs.SAME__ORG[ORG]['ARTICLE'][COUNTRY]].title(), has=defs.MSG__TEXT[LANG]['HAS'] if not defs.SAME__ORG[ORG]['PLURAL'] else defs.MSG__TEXT[LANG]['HAVE'], preposition=defs.MSG__TEXT[LANG]['IN'] if location !='' else '')]
     current_state=None
     for idx, item in enumerate(PSSCCC):
-        county, state=county_decode(item, LOCATION)
+        county, state=county_decode(item, COUNTRY)
         if current_state != state:
-            DIVISION=get_division(PSSCCC[idx][1:3], LOCATION)
+            DIVISION=get_division(PSSCCC[idx][1:3], COUNTRY)
             output=defs.MSG__TEXT[LANG]['MSG2'].format(conjunction='' if idx == 0 else defs.MSG__TEXT[LANG]['AND'], state=state, division=DIVISION) 
             MSG+=[''.join(output)]
             current_state=state
@@ -213,31 +213,31 @@ def same_decode(same, lang, same_watch=None, event_watch=None, text=True, call=N
             except KeyError:
                 CA_bad_list.append(code)
         if len(US_bad_list) < len(CA_bad_list):
-            LOCATION='US'
+            COUNTRY='US'
         if len(US_bad_list) > len(CA_bad_list):
-            LOCATION='CA'
+            COUNTRY='CA'
         if len(US_bad_list) == len(CA_bad_list):
             if type=='CA':
-                LOCATION='CA'
+                COUNTRY='CA'
             else:
-                LOCATION='US'
-        if LOCATION=='CA':
+                COUNTRY='US'
+        if COUNTRY=='CA':
             bad_list=CA_bad_list
         else:
             bad_list=US_bad_list
         logging.debug(' '.join(['Invalid Codes found >',str(len(bad_list))]))
-        logging.debug(' '.join(['           Location >',LOCATION]))
+        logging.debug(' '.join(['            Country >',COUNTRY]))
         logging.debug('-' * 30)
         for code in bad_list:
             PSSCCC_list.remove(code)
         if check_watch(same_watch, PSSCCC_list, event_watch, EEE):
             if text:
-                readable_message(ORG, EEE, PSSCCC_list, TTTT, JJJHHMM, STATION, TYPE, LLLLLLLL, LOCATION, lang)
+                readable_message(ORG, EEE, PSSCCC_list, TTTT, JJJHHMM, STATION, TYPE, LLLLLLLL, COUNTRY, lang)
             if command:
                 if call:
                     pass
                 else:
-                    printf(format_message(command, ORG, EEE, PSSCCC_list, TTTT, JJJHHMM, STATION, TYPE, LLLLLLLL, LOCATION, lang))
+                    printf(format_message(command, ORG, EEE, PSSCCC_list, TTTT, JJJHHMM, STATION, TYPE, LLLLLLLL, COUNTRY, lang))
     else:
         msgidx=same.find('NNNN')
         if msgidx == -1:
