@@ -2,7 +2,7 @@ dsame
 =====
 **dsame** is a program to decode [EAS](http://en.wikipedia.org/wiki/Emergency_Alert_System)/[SAME](http://en.wikipedia.org/wiki/Specific_Area_Message_Encoding) (Emergency Alert System/Specific Area Message Encoding) alert messages. These messages are primarily used by the National Weather Service for weather-related warnings. DSame will decode a demodulated message, filter by SAME code ([US](http://www.nws.noaa.gov/nwr/coverage/county_coverage.html)/[CA](http://www.ec.gc.ca/meteo-weather/default.asp?lang=En&n=E5A4F19C-1)) and/or event, provide readable text or run another program.
 
-**DO NOT RELY ON THIS PROGRAM WHEN LOSS OF LIFE MAY OCCUR!**
+**DO NOT RELY ON THIS PROGRAM WHEN INJURY OR DEATH MAY OCCUR!**
 
 ###Requirements:
 
@@ -40,7 +40,7 @@ Variable        | Description                       | Example
  {TTTT}         | Purge time code                   | 0030
  {JJJHHMM}      | Date code                         | 1051700
  {LLLLLLLL}     | Originator code                   | KEAX/NWS
- {COUNTRY}      | Location code                     | US
+ {COUNTRY}      | Country code                      | US
  {organization} | Organization name                 | National Weather Service
  {location}     | Originator location               | Pleasant Hill, Missouri
  {event}        | Event type                        | Required Weekly Test
@@ -68,3 +68,5 @@ Decoding a message from the command line:
 * SASMEX/SARMEX, a Mexican system for seismic alerts, is not implemented due to lack of documentation.
 * A correct and complete list of ICAO location codes used by the National Weather Service messages is not available.
 * Location detection may not be reliable for some locations with duplicate SAME codes
+* Date and time information may not be accurate when decoding old messages or messages from another time zone
+
