@@ -1,6 +1,7 @@
 VERSION = '0.0.1.0'
 PROGRAM = 'dsame'
 DESCRIPTION = 'DSame is a program to decode EAS/SAME alert messages'
+COPYRIGHT = 'Copyright (C) 2015 Joseph W. Metcalf'
 
 TEST_STRING = 'EAS: ZCZC-WXR-RWT-055027-055039-055047-055117-055131-055137-055139-055015-055071+0030-0771800-KMKX/NWS-'
 
@@ -5789,15 +5790,15 @@ CA_SAME_CODE={
 
 SAME_LOCA={
     '0' : None,
-    '1' : 'NORTHWEST', 
-    '2' : 'NORTH CENTRAL', 
-    '3' : 'NORTHEAST',
-    '4' : 'WEST CENTRAL',
-    '5' : 'CENTRAL',
-    '6' : 'EAST CENTRAL',
-    '7' : 'SOUTHWEST',
-    '8' : 'SOUTH CENTRAL',
-    '9' : 'SOUTHEAST',
+    '1' : 'Northwest', 
+    '2' : 'North Central', 
+    '3' : 'Northeast',
+    '4' : 'West Central',
+    '5' : 'Central',
+    '6' : 'East Central',
+    '7' : 'Southwest',
+    '8' : 'South Central',
+    '9' : 'Southeast',
 }
 
 SAME_LOCB={
@@ -6695,6 +6696,7 @@ ICAO_LIST={
     'KHFD' : 'HARTFORD, CONNECTICUT',
     'KHFF' : 'HOFFMAN, NORTH CAROLINA',
     'KHGR' : 'HAGERSTOWN, MARYLAND',
+    'KHGX' : 'HOUSTON, TEXAS',
     'KHHF' : 'CANADIAN, TEXAS',
     'KHHR' : 'HAWTHORNE, CALIFORNIA',
     'KHIB' : 'HIBBING, MINNESOTA',
