@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2015 Joseph W. Metcalf
+# Copyright (C) 2015 Joseph W. Metcalf
 #
 # Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby 
 # granted, provided that the above copyright notice and this permission notice appear in all copies.
@@ -18,6 +18,7 @@ import argparse
 import string
 import logging
 import datetime
+import time
     
 def alert_start(JJJHHMM, format='%j%H%M'):
     import calendar
@@ -118,14 +119,14 @@ def check_watch(watch_list, PSSCCC_list, event_list, EEE):
     else:
         return False
 
-def format_message(command, ORG='WXR',EEE='RWT',PSSCCC=[],TTTT='0030',JJJHHMM='0010000',STATION=None, TYPE=None, LLLLLLLL=None, COUNTRY='US', LANG='EN', **kwargs):
+def format_message(command, ORG='WXR', EEE='RWT',PSSCCC=[],TTTT='0030',JJJHHMM='0010000',STATION=None, TYPE=None, LLLLLLLL=None, COUNTRY='US', LANG='EN', **kwargs):
     return command.format(ORG=ORG, EEE=EEE, TTTT=TTTT, JJJHHMM=JJJHHMM, STATION=STATION, TYPE=TYPE, LLLLLLLL=LLLLLLLL, COUNTRY=COUNTRY, LANG=LANG, event=get_event(EEE), end=fn_dt(alert_end(JJJHHMM,TTTT)), start=fn_dt(alert_start(JJJHHMM)), organization=defs.SAME__ORG[ORG]['NAME'][COUNTRY], PSSCCC='-'.join(PSSCCC), location=get_location(STATION, TYPE), date=fn_dt(datetime.datetime.now(),'%c'), length=get_length(TTTT), **kwargs)
        
 def readable_message(ORG='WXR',EEE='RWT',PSSCCC=[],TTTT='0030',JJJHHMM='0010000',STATION=None, TYPE=None, LLLLLLLL=None, COUNTRY='US', LANG='EN'):
     import textwrap
     printf()
     location=get_location(STATION, TYPE)
-    MSG=[format_message(defs.MSG__TEXT[LANG]['MSG1'], ORG=ORG, TTTT=TTTT, JJJHHMM=JJJHHMM, STATION=STATION, TYPE=TYPE, COUNTRY=COUNTRY, LANG=LANG, article=defs.MSG__TEXT[LANG][defs.SAME__ORG[ORG]['ARTICLE'][COUNTRY]].title(), has=defs.MSG__TEXT[LANG]['HAS'] if not defs.SAME__ORG[ORG]['PLURAL'] else defs.MSG__TEXT[LANG]['HAVE'], preposition=defs.MSG__TEXT[LANG]['IN'] if location !='' else '')]
+    MSG=[format_message(defs.MSG__TEXT[LANG]['MSG1'], ORG=ORG, EEE=EEE, TTTT=TTTT, JJJHHMM=JJJHHMM, STATION=STATION, TYPE=TYPE, COUNTRY=COUNTRY, LANG=LANG, article=defs.MSG__TEXT[LANG][defs.SAME__ORG[ORG]['ARTICLE'][COUNTRY]].title(), has=defs.MSG__TEXT[LANG]['HAS'] if not defs.SAME__ORG[ORG]['PLURAL'] else defs.MSG__TEXT[LANG]['HAVE'], preposition=defs.MSG__TEXT[LANG]['IN'] if location !='' else '')]
     current_state=None
     for idx, item in enumerate(PSSCCC):
         county, state=county_decode(item, COUNTRY)
@@ -234,10 +235,17 @@ def same_decode(same, lang, same_watch=None, event_watch=None, text=True, call=N
             if text:
                 readable_message(ORG, EEE, PSSCCC_list, TTTT, JJJHHMM, STATION, TYPE, LLLLLLLL, COUNTRY, lang)
             if command:
+                f_cmd=format_message(command, ORG, EEE, PSSCCC_list, TTTT, JJJHHMM, STATION, TYPE, LLLLLLLL, COUNTRY, lang)
                 if call:
+                    import subprocess
+                    try:
+                        subprocess.call([call, f_cmd], shell=True)
+                    except:
+                        logging.error('External Command')
+                        return
                     pass
                 else:
-                    printf(format_message(command, ORG, EEE, PSSCCC_list, TTTT, JJJHHMM, STATION, TYPE, LLLLLLLL, COUNTRY, lang))
+                    printf(f_cmd)
     else:
         msgidx=same.find('NNNN')
         if msgidx == -1:
@@ -264,9 +272,6 @@ def parse_arguments():
 def main():
     args=parse_arguments()
     logging.basicConfig(level=args.loglevel,format='%(levelname)s: %(message)s')
-    if args.call:
-        from subprocess import call
-        call([args.call, args.command])
     if args.msg:
         same_decode(args.msg, args.lang, same_watch=args.same, event_watch=args.event, text=args.text, call=args.call, command=args.command)
     else:
@@ -276,7 +281,7 @@ def main():
                 same_decode(line, args.lang, same_watch=args.same, event_watch=args.event, text=args.text, call=args.call, command=args.command)
 
 if __name__ == "__main__":
-   try:
-      main()
-   except KeyboardInterrupt:
-      pass
+    try:
+        main()
+    except KeyboardInterrupt:
+        pass
