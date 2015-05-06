@@ -19,6 +19,7 @@ import string
 import logging
 import datetime
 import time
+import subprocess
     
 def alert_start(JJJHHMM, format='%j%H%M'):
     import calendar
@@ -34,7 +35,7 @@ def fn_dt(dt, format='%I:%M %p'):
 # ZCZC-ORG-EEE-PSSCCC-PSSCCC+TTTT-JJJHHMM-LLLLLLLL-
 
 def format_error(info=''):
-    logging.error(' '.join(['INVALID FORMAT', info]))
+    logging.warning(' '.join(['INVALID FORMAT', info]))
 
 def time_str(x, type='hour'):
     if x==1:
@@ -237,11 +238,10 @@ def same_decode(same, lang, same_watch=None, event_watch=None, text=True, call=N
             if command:
                 f_cmd=format_message(command, ORG, EEE, PSSCCC_list, TTTT, JJJHHMM, STATION, TYPE, LLLLLLLL, COUNTRY, lang)
                 if call:
-                    import subprocess
                     try:
                         subprocess.call([call, f_cmd], shell=True)
-                    except:
-                        logging.error('External Command')
+                    except Exception as detail:
+                        logging.error(detail)
                         return
                     pass
                 else:
@@ -249,7 +249,7 @@ def same_decode(same, lang, same_watch=None, event_watch=None, text=True, call=N
     else:
         msgidx=same.find('NNNN')
         if msgidx == -1:
-            logging.error('Valid identifer not found.')
+            logging.warning('Valid identifer not found.')
         else:
             logging.debug(' '.join(['End of Message found >','NNNN',str(msgidx)]))
 
@@ -264,7 +264,8 @@ def parse_arguments():
     parser.add_argument('--no-text', dest='text', action='store_false', help='disable readable message')
     parser.add_argument('--version', action='version', version=' '.join([defs.PROGRAM, defs.VERSION]),help='show version infomation and exit')
     parser.add_argument('--call', help='call external command')
-    parser.add_argument('--command', default='', help='command message')
+    parser.add_argument('--command', help='command message')
+    parser.add_argument('--source', help='source program')
     parser.set_defaults(text=True)
     args, unknown = parser.parse_known_args()
     return args
@@ -274,11 +275,23 @@ def main():
     logging.basicConfig(level=args.loglevel,format='%(levelname)s: %(message)s')
     if args.msg:
         same_decode(args.msg, args.lang, same_watch=args.same, event_watch=args.event, text=args.text, call=args.call, command=args.command)
+    elif args.source:
+        try:
+            source_process = subprocess.Popen(args.source, stdout=subprocess.PIPE)
+        except Exception as detail:
+                logging.error(detail)
+                return
+        while True:
+            line = source_process.stdout.readline()
+            if line:
+                logging.debug(line)
+                same_decode(line, args.lang, same_watch=args.same, event_watch=args.event, text=args.text, call=args.call, command=args.command)
     else:
         while True:
             for line in sys.stdin:
                 logging.debug(line)
                 same_decode(line, args.lang, same_watch=args.same, event_watch=args.event, text=args.text, call=args.call, command=args.command)
+
 
 if __name__ == "__main__":
     try:
