@@ -67,6 +67,7 @@ Decoding a message from the command line:
 
 * SASMEX/SARMEX, a Mexican system for seismic alerts, is not implemented due to lack of documentation.
 * A correct and complete list of ICAO location codes used by the National Weather Service messages is not available.
-* Location detection may not be reliable for some locations with duplicate SAME codes
-* Date and time information may not be accurate when decoding old messages or messages from another time zone
+* Location detection may not be reliable for some locations with duplicate SAME codes.
+* Date and time information may not be accurate when decoding old messages or messages from another time zone.
+* Multimon-ng will not decode the same alert in succession. This should only be an issue during testing and can be avoided by alternating alerts.
 
