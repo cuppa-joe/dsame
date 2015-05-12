@@ -55,6 +55,7 @@ Variable        | Description                       | Example
 Using a RTL-SDR dongle and multimon-ng to decode from standard input:
 
 `rtl_fm -f 162.500M -M fm -s 22050 -E dc -p -14 -g 42  -|  multimon-ng -t raw -a EAS - | dsame.py --same 029165`
+
 `dsame.py --same 029165 --source source.sh'
 
 Decoding a message from the command line:
