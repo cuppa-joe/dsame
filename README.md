@@ -16,7 +16,7 @@ dsame
 usage: dsame [-h] [--msg MSG] [--same [SAME [SAME ...]]]
              [--event [EVENT [EVENT ...]]] [--lang LANG]
              [--loglevel {10,20,30,40,50}] [--text] [--no-text] [--version]
-             [--call CALL] [--command COMMAND]
+             [--call CALL] [--command COMMAND] [--source SOURCE]
 ```
 ####Options
 
@@ -29,6 +29,7 @@ loglevel        | Set log level                                                 
 text, no-text   | Output/Omit readable message text                                     | --text, --no-text
 call            | Call an external program                                              | --call alert.sh
 command         | External command line. Omit --call to send to standard output         | --command "Event Code: {EEE}" 
+source          | Source script/program. See /scripts for examples                      | --source source.bat
 
 #####Command Variable Substitution
 
@@ -54,6 +55,7 @@ Variable        | Description                       | Example
 Using a RTL-SDR dongle and multimon-ng to decode from standard input:
 
 `rtl_fm -f 162.500M -M fm -s 22050 -E dc -p -14 -g 42  -|  multimon-ng -t raw -a EAS - | dsame.py --same 029165`
+`dsame.py --same 029165 --source source.sh'
 
 Decoding a message from the command line:
 
