@@ -1,0 +1,516 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>dsame by cuppa-joe</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">dsame</h1>
+        <p class="header">Python EAS SAME Alert Message Decoder </p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/cuppa-joe/dsame/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/cuppa-joe/dsame/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/cuppa-joe/dsame">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/cuppa-joe">cuppa-joe</a></p>
+
+
+      </header>
+      <section>
+        <h1>
+<a id="dsame" class="anchor" href="#dsame" aria-hidden="true"><span class="octicon octicon-link"></span></a>dsame</h1>
+
+<p><strong>dsame</strong> is a program to decode <a href="http://en.wikipedia.org/wiki/Emergency_Alert_System">EAS</a>/<a href="http://en.wikipedia.org/wiki/Specific_Area_Message_Encoding">SAME</a> (Emergency Alert System/Specific Area Message Encoding) alert messages. These messages are primarily used by the National Weather Service for weather-related warnings. <strong>dsame</strong> will decode a demodulated message, filter by SAME (<a href="http://www.nws.noaa.gov/nwr/coverage/county_coverage.html">US</a>/<a href="http://www.ec.gc.ca/meteo-weather/default.asp?lang=En&amp;n=E5A4F19C-1">CA</a>) and/or event code, provide readable text, or run an external program.</p>
+
+<p><strong>++DO NOT RELY ON THIS PROGRAM WHEN LOSS, DAMAGE, INJURY OR DEATH MAY OCCUR!++</strong></p>
+
+<h3>
+<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Requirements</h3>
+
+<ul>
+<li>
+<a href="https://www.python.org/">Python</a> 2.7+</li>
+<li>A <a href="www.nws.noaa.gov/nwr/">weather radio</a>, <a href="http://www.rtl-sdr.com/about-rtl-sdr/">RTL-SDR</a> or other receiving/source device</li>
+<li>A demodulator, such as <a href="https://github.com/EliasOenal/multimon-ng/">multimon-ng</a> (<a href="https://github.com/cuppa-joe/multimon-ng/releases">Windows binaries</a>)</li>
+</ul>
+
+<h3>
+<a id="command-line-options" class="anchor" href="#command-line-options" aria-hidden="true"><span class="octicon octicon-link"></span></a>Command Line Options</h3>
+
+<pre><code>usage: dsame [-h] [--msg MSG] [--same [SAME [SAME ...]]]
+             [--event [EVENT [EVENT ...]]] [--lang LANG]
+             [--loglevel {10,20,30,40,50}] [--text] [--no-text] [--version]
+             [--call CALL] [--command COMMAND] [--source SOURCE]
+</code></pre>
+
+<h4>
+<a id="options" class="anchor" href="#options" aria-hidden="true"><span class="octicon octicon-link"></span></a>Options</h4>
+
+<table>
+<thead>
+<tr>
+<th align="left">Option</th>
+<th align="left">Description</th>
+<th align="left">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>msg</code></td>
+<td align="left">Message to decode. Omit to read from standard input</td>
+<td align="left"><code>--msg "ZCZC-WXR-RWT-020103-020209-020091-020121-029047-029165-029095-029037+0030-1051700-KEAX/NWS"</code></td>
+</tr>
+<tr>
+<td align="left"><code>same</code></td>
+<td align="left">List of SAME codes to monitor</td>
+<td align="left"><code>--same 029165 029095</code></td>
+</tr>
+<tr>
+<td align="left"><code>event</code></td>
+<td align="left">List of event codes to monitor</td>
+<td align="left"><code>--event RWT TOR SVR</code></td>
+</tr>
+<tr>
+<td align="left"><code>loglevel</code></td>
+<td align="left">Set log level</td>
+<td align="left"><code>--loglevel 10</code></td>
+</tr>
+<tr>
+<td align="left">
+<code>text</code>, <code>no-text</code>
+</td>
+<td align="left">Output/Omit readable message text</td>
+<td align="left">
+<code>--text</code>, <code>--no-text</code>
+</td>
+</tr>
+<tr>
+<td align="left"><code>call</code></td>
+<td align="left">Call an external program</td>
+<td align="left"><code>--call alert.sh</code></td>
+</tr>
+<tr>
+<td align="left"><code>command</code></td>
+<td align="left">External command line. Omit --call to send to standard output</td>
+<td align="left"><code>--command "Event Code: {EEE}"</code></td>
+</tr>
+<tr>
+<td align="left"><code>source</code></td>
+<td align="left">Source script/program. See /scripts for examples</td>
+<td align="left"><code>--source source.sh</code></td>
+</tr>
+</tbody>
+</table>
+
+<h3>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h3>
+
+<p><strong>dsame</strong> can decode EAS messages from the command line, directly from the output of an external command, or by capturing the ouput of a shell script/batch file or external program. Use <code>msg</code> for command line decoding. The <code>source</code> command is used to capture and decode the output of a script or program. Without one of these options, standard input is used. Press <code>CTRL-C</code> to exit the program.</p>
+
+<h3>
+<a id="filtering-alerts" class="anchor" href="#filtering-alerts" aria-hidden="true"><span class="octicon octicon-link"></span></a>Filtering Alerts</h3>
+
+<p>There are two comands used to filter alerts. None, one or both can be specified. The <code>same</code> command is a list of SAME area codes (<a href="http://www.nws.noaa.gov/nwr/coverage/county_coverage.html">United States</a>/<a href="http://www.ec.gc.ca/meteo-weather/default.asp?lang=En&amp;n=E5A4F19C-1">Canada</a>), and the <code>event</code> command is a list of event codes to monitor.</p>
+
+<h4>
+<a id="event-codes" class="anchor" href="#event-codes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Event Codes</h4>
+
+<p><em>This list includes current and proposed event codes.</em></p>
+
+<table>
+<thead>
+<tr>
+<th align="center">Code</th>
+<th align="left">Description</th>
+<th align="center">Code</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">ADR</td>
+<td align="left">Administrative Message</td>
+<td align="center">AVA</td>
+<td align="left">Avalanche Watch</td>
+</tr>
+<tr>
+<td align="center">AVW</td>
+<td align="left">Avalanche Warning</td>
+<td align="center">BHW</td>
+<td align="left">Biological Hazard Warning</td>
+</tr>
+<tr>
+<td align="center">BWW</td>
+<td align="left">Boil Water Warning</td>
+<td align="center">BZW</td>
+<td align="left">Blizzard Warning</td>
+</tr>
+<tr>
+<td align="center">CAE</td>
+<td align="left">Child Abduction Emergency</td>
+<td align="center">CDW</td>
+<td align="left">Civil Danger Warning</td>
+</tr>
+<tr>
+<td align="center">CEM</td>
+<td align="left">Civil Emergency Message</td>
+<td align="center">CFA</td>
+<td align="left">Coastal Flood Watch</td>
+</tr>
+<tr>
+<td align="center">CFW</td>
+<td align="left">Coastal Flood Warning</td>
+<td align="center">CHW</td>
+<td align="left">Chemical Hazard Warning</td>
+</tr>
+<tr>
+<td align="center">CWW</td>
+<td align="left">Contaminated Water Warning</td>
+<td align="center">DBA</td>
+<td align="left">Dam Watch</td>
+</tr>
+<tr>
+<td align="center">DBW</td>
+<td align="left">Dam Break Warning</td>
+<td align="center">DEW</td>
+<td align="left">Contagious Disease Warning</td>
+</tr>
+<tr>
+<td align="center">DMO</td>
+<td align="left">Demo Warning</td>
+<td align="center">DSW</td>
+<td align="left">Dust Storm Warning</td>
+</tr>
+<tr>
+<td align="center">EAN</td>
+<td align="left">Emergency Action Notification</td>
+<td align="center">EAT</td>
+<td align="left">Emergengy Action Termination</td>
+</tr>
+<tr>
+<td align="center">EQW</td>
+<td align="left">Earthquake Warning</td>
+<td align="center">EVA</td>
+<td align="left">Evacuation Watch</td>
+</tr>
+<tr>
+<td align="center">EVI</td>
+<td align="left">Evacuation Immediate</td>
+<td align="center">EWW</td>
+<td align="left">Extreme Wind Warning</td>
+</tr>
+<tr>
+<td align="center">FCW</td>
+<td align="left">Food Contamination Warning</td>
+<td align="center">FFA</td>
+<td align="left">Flash Flood Watch</td>
+</tr>
+<tr>
+<td align="center">FFS</td>
+<td align="left">Flash Flood Statement</td>
+<td align="center">FFW</td>
+<td align="left">Flash Flood Warning</td>
+</tr>
+<tr>
+<td align="center">FLA</td>
+<td align="left">Flood Watch</td>
+<td align="center">FLS</td>
+<td align="left">Flood Statement</td>
+</tr>
+<tr>
+<td align="center">FLW</td>
+<td align="left">Flood Warning</td>
+<td align="center">FRW</td>
+<td align="left">Fire Warning</td>
+</tr>
+<tr>
+<td align="center">FSW</td>
+<td align="left">Flash Freeze Warning</td>
+<td align="center">FZW</td>
+<td align="left">Freeze Warning</td>
+</tr>
+<tr>
+<td align="center">HLS</td>
+<td align="left">Hurricane Local Statement</td>
+<td align="center">HMW</td>
+<td align="left">Hazardous Materials Warning</td>
+</tr>
+<tr>
+<td align="center">HUA</td>
+<td align="left">Hurricane Watch</td>
+<td align="center">HUW</td>
+<td align="left">Hurrican Warning</td>
+</tr>
+<tr>
+<td align="center">HWA</td>
+<td align="left">High Wind Watch</td>
+<td align="center">HWW</td>
+<td align="left">High Wind Warning</td>
+</tr>
+<tr>
+<td align="center">IBW</td>
+<td align="left">Iceberg Warning</td>
+<td align="center">IFW</td>
+<td align="left">Industrial Fire Warning</td>
+</tr>
+<tr>
+<td align="center">LAE</td>
+<td align="left">Local Area Emergency</td>
+<td align="center">LEW</td>
+<td align="left">Law Enforcement Warning</td>
+</tr>
+<tr>
+<td align="center">LSW</td>
+<td align="left">Land Slide Warning</td>
+<td align="center">NAT</td>
+<td align="left">National Audible Test</td>
+</tr>
+<tr>
+<td align="center">NIC</td>
+<td align="left">National Information Center</td>
+<td align="center">NMN</td>
+<td align="left">Network Message Notification</td>
+</tr>
+<tr>
+<td align="center">NPT</td>
+<td align="left">National Periodic Test</td>
+<td align="center">NST</td>
+<td align="left">National Silent Test</td>
+</tr>
+<tr>
+<td align="center">NUW</td>
+<td align="left">Nuclear Plant Warning</td>
+<td align="center">POS</td>
+<td align="left">Power Outage Statement</td>
+</tr>
+<tr>
+<td align="center">RHW</td>
+<td align="left">Radiological Hazard Warning</td>
+<td align="center">RMT</td>
+<td align="left">Required Monthly Test</td>
+</tr>
+<tr>
+<td align="center">RWT</td>
+<td align="left">Required Weekly Test</td>
+<td align="center">SMW</td>
+<td align="left">Special Marine Warning</td>
+</tr>
+<tr>
+<td align="center">SPS</td>
+<td align="left">Special Weather Statement</td>
+<td align="center">SPW</td>
+<td align="left">Shelter in Place Warning</td>
+</tr>
+<tr>
+<td align="center">SSA</td>
+<td align="left">Storm Surge Watch</td>
+<td align="center">SSW</td>
+<td align="left">Storm Surge Warning</td>
+</tr>
+<tr>
+<td align="center">SVA</td>
+<td align="left">Severe Thunderstorm Watch</td>
+<td align="center">SVR</td>
+<td align="left">Severe Thunderstorm Warning</td>
+</tr>
+<tr>
+<td align="center">SVS</td>
+<td align="left">Severe Weather Statement</td>
+<td align="center">TOA</td>
+<td align="left">Tornado Watch</td>
+</tr>
+<tr>
+<td align="center">TOE</td>
+<td align="left">911 Outage Emergency</td>
+<td align="center">TOR</td>
+<td align="left">Tornado Warning</td>
+</tr>
+<tr>
+<td align="center">TRA</td>
+<td align="left">Tropical Storm Watch</td>
+<td align="center">TRW</td>
+<td align="left">Tropical Storm Warning</td>
+</tr>
+<tr>
+<td align="center">TSA</td>
+<td align="left">Tsunami Watch</td>
+<td align="center">TSW</td>
+<td align="left">Tsunami Warning</td>
+</tr>
+<tr>
+<td align="center">VOW</td>
+<td align="left">Volcano Warning</td>
+<td align="center">WFA</td>
+<td align="left">Wild Fire Watch</td>
+</tr>
+<tr>
+<td align="center">WFW</td>
+<td align="left">Wild Fire Warning</td>
+<td align="center">WSA</td>
+<td align="left">Winter Storm Watch</td>
+</tr>
+<tr>
+<td align="center">WSW</td>
+<td align="left">Winter Storm Warning</td>
+<td align="center"></td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+
+<p>An alert must match one of each specified alert type in order to br processed. If an alert type is omitted, any alert will match that type. In most cases, using only SAME codes to filter alerts will be the best option.</p>
+
+<h3>
+<a id="external-commands" class="anchor" href="#external-commands" aria-hidden="true"><span class="octicon octicon-link"></span></a>External Commands</h3>
+
+<p>The <code>call</code> option runs an external program, script/batch file for each alert.  The <code>command</code> option defines the command string sent to that program, script or batch file, or to standard output if the <code>call</code> option is omitted. The following variables can be used in command strings.</p>
+
+<h4>
+<a id="command-variables" class="anchor" href="#command-variables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Command Variables</h4>
+
+<table>
+<thead>
+<tr>
+<th align="left">Variable</th>
+<th align="left">Description</th>
+<th align="left">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">{ORG}</td>
+<td align="left">Organization code</td>
+<td align="left">WXR</td>
+</tr>
+<tr>
+<td align="left">{EEE}</td>
+<td align="left">Event code</td>
+<td align="left">RWT</td>
+</tr>
+<tr>
+<td align="left">{PSSCCC}</td>
+<td align="left">Geographical area (SAME) codes</td>
+<td align="left">020103-020209-020091-020121-029047-029165-029095-029037</td>
+</tr>
+<tr>
+<td align="left">{TTTT}</td>
+<td align="left">Purge time code</td>
+<td align="left">0030</td>
+</tr>
+<tr>
+<td align="left">{JJJHHMM}</td>
+<td align="left">Date code</td>
+<td align="left">1051700</td>
+</tr>
+<tr>
+<td align="left">{LLLLLLLL}</td>
+<td align="left">Originator code</td>
+<td align="left">KEAX/NWS</td>
+</tr>
+<tr>
+<td align="left">{COUNTRY}</td>
+<td align="left">Country code</td>
+<td align="left">US</td>
+</tr>
+<tr>
+<td align="left">{organization}</td>
+<td align="left">Organization name</td>
+<td align="left">National Weather Service</td>
+</tr>
+<tr>
+<td align="left">{location}</td>
+<td align="left">Originator location</td>
+<td align="left">Pleasant Hill, Missouri</td>
+</tr>
+<tr>
+<td align="left">{event}</td>
+<td align="left">Event type</td>
+<td align="left">Required Weekly Test</td>
+</tr>
+<tr>
+<td align="left">{start}</td>
+<td align="left">Start time</td>
+<td align="left">12:00 PM</td>
+</tr>
+<tr>
+<td align="left">{end}</td>
+<td align="left">End time</td>
+<td align="left">12:30 PM</td>
+</tr>
+<tr>
+<td align="left">{length}</td>
+<td align="left">Length of event</td>
+<td align="left">30 minutes</td>
+</tr>
+<tr>
+<td align="left">{date}</td>
+<td align="left">Local date</td>
+<td align="left">04/15/15 12:00:38</td>
+</tr>
+</tbody>
+</table>
+
+<h3>
+<a id="sample-commands" class="anchor" href="#sample-commands" aria-hidden="true"><span class="octicon octicon-link"></span></a>Sample Commands</h3>
+
+<p>Decoding from a file using standard input:</p>
+
+<p><code>cat zczc.txt | dsame.py --same 029165</code></p>
+
+<p>Using a source script to decode from standard input:</p>
+
+<p><code>dsame.py --same 029165 --source source.sh</code></p>
+
+<p>Call an external script with the event type and length:</p>
+
+<p><code>dsame.py --same 029165 --source source.sh --call alert.sh --command "{length} {event}"</code></p>
+
+<p>Decoding a message from the command line:</p>
+
+<p><code>dsame.py --msg "ZCZC-WXR-RWT-020103-020209-020091-020121-029047-029165-029095-029037+0030-1051700-KEAX/NWS" --text</code></p>
+
+<p>Print an encoded alert string, and omit the alert text:</p>
+
+<p><code>dsame.py --source source.sh --no-text --command "ZCZC-{ORG}-{EEE}-{PSSCCC}+{TTTT}-{JJJHHMM}-{LLLLLLLL}-"</code></p>
+
+<h3>
+<a id="sample-text-output" class="anchor" href="#sample-text-output" aria-hidden="true"><span class="octicon octicon-link"></span></a>Sample Text Output</h3>
+
+<blockquote>
+<p>The National Weather Service in Pleasant Hill, Missouri has issued a Required Weekly Test valid until 12:30 PM for the following counties in Kansas: Leavenworth, Wyandotte, Johnson, Miami, and for the following counties in Missouri: Clay, Platte, Jackson, Cass. (KEAX/NWS)</p>
+</blockquote>
+
+<h3>
+<a id="known-issues" class="anchor" href="#known-issues" aria-hidden="true"><span class="octicon octicon-link"></span></a>Known Issues</h3>
+
+<ul>
+<li>SASMEX/SARMEX, a Mexican system for seismic alerts, is not implemented due to lack of documentation.</li>
+<li>A correct and complete list of ICAO location codes used by the National Weather Service messages is not available.</li>
+<li>Country detection may not be reliable for some locations with duplicate SAME codes.</li>
+<li>Date and time information may not be accurate when decoding old messages or messages from another time zone.</li>
+<li>Multimon-ng will not decode the same alert in succession. This should only be an issue during testing and can be avoided by alternating alerts.</li>
+</ul>
+
+<hr>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>
