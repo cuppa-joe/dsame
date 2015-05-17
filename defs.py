@@ -1,6 +1,6 @@
 VERSION = '0.0.1.0'
 PROGRAM = 'dsame'
-DESCRIPTION = 'DSame is a program to decode EAS/SAME alert messages'
+DESCRIPTION = 'dsame is a program to decode EAS/SAME alert messages'
 COPYRIGHT = 'Copyright (C) 2015 Joseph W. Metcalf'
 
 TEST_STRING = 'EAS: ZCZC-WXR-RWT-055027-055039-055047-055117-055131-055137-055139-055015-055071+0030-0771800-KMKX/NWS-'
