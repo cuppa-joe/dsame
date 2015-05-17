@@ -130,7 +130,7 @@ Decoding a message from the command line:
 
 Print an encoded alert string, and omit the alert text:
 
-`dsame.py --source source.sh --no-text --command "ZCZC-{ORG}-{EEE}-{PSSCCC}+{TTTT}-{JJJHHMM}-{LLLLLLLL}"`
+`dsame.py --source source.sh --no-text --command "ZCZC-{ORG}-{EEE}-{PSSCCC}+{TTTT}-{JJJHHMM}-{LLLLLLLL}-"`
 
 ###Sample Text Output
 
