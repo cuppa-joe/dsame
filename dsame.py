@@ -232,6 +232,7 @@ def same_decode(same, lang, same_watch=None, event_watch=None, text=True, call=N
         logging.debug('-' * 30)
         for code in bad_list:
             PSSCCC_list.remove(code)
+        PSSCCC_list.sort()
         if check_watch(same_watch, PSSCCC_list, event_watch, EEE):
             if text:
                 readable_message(ORG, EEE, PSSCCC_list, TTTT, JJJHHMM, STATION, TYPE, LLLLLLLL, COUNTRY, lang)
