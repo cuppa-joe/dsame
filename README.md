@@ -9,6 +9,14 @@
 * A [weather radio](www.nws.noaa.gov/nwr/), [RTL-SDR](http://www.rtl-sdr.com/about-rtl-sdr/) or other receiving/source device
 * A demodulator, such as [multimon-ng](https://github.com/EliasOenal/multimon-ng/) ([Windows binaries](https://github.com/cuppa-joe/multimon-ng/releases))
 
+###Installation
+
+For Microsoft Windows, **dsame** is distributed as a self-extracting installer, and downloads for 64-bit and 32-bit systems are available. Run the installer to install the program and optionally multimon-ng and/or rtl_fm.
+
+For Linux and similar systems, **dsame** is available as a compressed (tar.gz or zip) archive which contains the program source. The source repository can also be cloned using `git`. Extract and run `dsame.py` using the python interpreter.
+
+Check [here](https://github.com/cuppa-joe/dsame/releases/latest) to download the latest release.
+
 ###Command Line Options
 
 ```
@@ -33,6 +41,10 @@ Option            | Description                                                 
 ###Usage
 
 **dsame** can decode EAS messages from the command line, directly from the output of an external command, or by capturing the ouput of a shell script/batch file or external program. Use `msg` for command line decoding. The `source` command is used to capture and decode the output of a script or program. Without one of these options, standard input is used. Press `CTRL-C` to exit the program.
+
+####Source Scripts
+
+Several sample source scripts and Windows batch files are provided in the `scripts` directory. If you are using a RTL-SDR device, edit the script to set the frequency, receiver gain and PPM error rate.
 
 ###Filtering Alerts
 
