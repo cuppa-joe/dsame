@@ -62,7 +62,7 @@ FLA | Flood Watch                  |FLS | Flood Statement
 FLW | Flood Warning                |FRW | Fire Warning
 FSW | Flash Freeze Warning         |FZW | Freeze Warning
 HLS | Hurricane Local Statement    |HMW | Hazardous Materials Warning
-HUA | Hurricane Watch              |HUW | Hurrican Warning
+HUA | Hurricane Watch              |HUW | Hurricane Warning
 HWA | High Wind Watch              |HWW | High Wind Warning
 IBW | Iceberg Warning              |IFW | Industrial Fire Warning
 LAE | Local Area Emergency         |LEW | Law Enforcement Warning
