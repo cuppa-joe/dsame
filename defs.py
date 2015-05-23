@@ -1,4 +1,4 @@
-VERSION = '0.0.1.0'
+VERSION = '0.1.0.0'
 PROGRAM = 'dsame'
 DESCRIPTION = 'dsame is a program to decode EAS/SAME alert messages'
 COPYRIGHT = 'Copyright (C) 2015 Joseph W. Metcalf'
@@ -129,7 +129,6 @@ US_SAME_AREA={
     '96' : 'Lake Erie',
     '97' : 'Niagara River and Lake Ontario',
     '98' : 'Saint Lawrence River',
-    'LOCATION' : 'US',
     'XX' : 'TEST',
 }
 
