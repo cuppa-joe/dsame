@@ -48,6 +48,15 @@
 </ul>
 
 <h3>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h3>
+
+<p>For Microsoft Windows, <strong>dsame</strong> is distributed as a self-extracting installer, and downloads for 64-bit and 32-bit systems are available. Run the installer to install the program and optionally multimon-ng and/or rtl_fm.</p>
+
+<p>For Linux and similar systems, <strong>dsame</strong> is available as a compressed (tar.gz or zip) archive which contains the program source. The source repository can also be cloned using <code>git</code>. Extract and run <code>dsame.py</code> using the python interpreter.</p>
+
+<p>Check <a href="https://github.com/cuppa-joe/dsame/releases/latest">here</a> to download the latest release.</p>
+
+<h3>
 <a id="command-line-options" class="anchor" href="#command-line-options" aria-hidden="true"><span class="octicon octicon-link"></span></a>Command Line Options</h3>
 
 <pre><code>usage: dsame [-h] [--msg MSG] [--same [SAME [SAME ...]]]
@@ -119,6 +128,11 @@
 <a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h3>
 
 <p><strong>dsame</strong> can decode EAS messages from the command line, directly from the output of an external command, or by capturing the ouput of a shell script/batch file or external program. Use <code>msg</code> for command line decoding. The <code>source</code> command is used to capture and decode the output of a script or program. Without one of these options, standard input is used. Press <code>CTRL-C</code> to exit the program.</p>
+
+<h4>
+<a id="source-scripts" class="anchor" href="#source-scripts" aria-hidden="true"><span class="octicon octicon-link"></span></a>Source Scripts</h4>
+
+<p>Several sample source scripts and Windows batch files are provided in the <code>scripts</code> directory. If you are using a RTL-SDR device, edit the script to set the frequency, receiver gain and PPM error rate.</p>
 
 <h3>
 <a id="filtering-alerts" class="anchor" href="#filtering-alerts" aria-hidden="true"><span class="octicon octicon-link"></span></a>Filtering Alerts</h3>
@@ -252,7 +266,7 @@
 <td align="center">HUA</td>
 <td align="left">Hurricane Watch</td>
 <td align="center">HUW</td>
-<td align="left">Hurrican Warning</td>
+<td align="left">Hurricane Warning</td>
 </tr>
 <tr>
 <td align="center">HWA</td>
