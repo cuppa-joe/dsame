@@ -1,4 +1,5 @@
 #!/bin/sh
+echo INPUT: rtl_fm Device 1>&2
 PPM=0
 FREQ=162.500
 GAIN=42
