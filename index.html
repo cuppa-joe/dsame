@@ -390,7 +390,7 @@
 <h3>
 <a id="external-commands" class="anchor" href="#external-commands" aria-hidden="true"><span class="octicon octicon-link"></span></a>External Commands</h3>
 
-<p>The <code>call</code> option runs an external program, script/batch file for each alert.  The <code>command</code> option defines the command string sent to that program, script or batch file, or to standard output if the <code>call</code> option is omitted. The following variables can be used in command strings.</p>
+<p>The <code>call</code> option runs an external program, script/batch file for each alert.  The <code>command</code> option defines the command string sent to that program, script or batch file, or to standard output if the <code>call</code> option is omitted. Be sure to include and escape quotation marks as needed. The following variables can be used in command strings.</p>
 
 <h4>
 <a id="command-variables" class="anchor" href="#command-variables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Command Variables</h4>
@@ -474,6 +474,11 @@
 <td align="left">Local date</td>
 <td align="left">04/15/15 12:00:38</td>
 </tr>
+<tr>
+<td align="left">{MESSAGE}</td>
+<td align="left">Readable message</td>
+<td align="left"><em>(See sample text output below)</em></td>
+</tr>
 </tbody>
 </table>
 
@@ -490,7 +495,7 @@
 
 <p>Call an external script with the event type and length:</p>
 
-<p><code>dsame.py --same 029165 --source source.sh --call alert.sh --command "{length} {event}"</code></p>
+<p><code>dsame.py --same 029165 --source source.sh --call alert.sh --command '\"{length}\" \"{event}\"'</code></p>
 
 <p>Decoding a message from the command line:</p>
 
