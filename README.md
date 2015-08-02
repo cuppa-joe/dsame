@@ -99,7 +99,7 @@ An alert must match one of each specified alert type in order to br processed. I
 
 ###External Commands
 
-The `call` option runs an external program, script/batch file for each alert.  The `command` option defines the command string sent to that program, script or batch file, or to standard output if the `call` option is omitted. The following variables can be used in command strings.
+The `call` option runs an external program, script/batch file for each alert.  The `command` option defines the command string sent to that program, script or batch file, or to standard output if the `call` option is omitted. Be sure to include and escape quotation marks as needed. The following variables can be used in command strings.
 
 ####Command Variables
 
@@ -119,6 +119,7 @@ Variable        | Description                       | Example
  {end}          | End time                          | 12:30 PM
  {length}       | Length of event                   | 30 minutes
  {date}         | Local date                        | 04/15/15 12:00:38
+ {MESSAGE}      | Readable message                  | *(See sample text output below)*
 
 ###Sample Commands
 
@@ -132,7 +133,7 @@ Using a source script to decode from standard input:
 
 Call an external script with the event type and length:
 
-`dsame.py --same 029165 --source source.sh --call alert.sh --command "{length} {event}"`
+`dsame.py --same 029165 --source source.sh --call alert.sh --command '\"{length}\" \"{event}\"'`
 
 Decoding a message from the command line:
 

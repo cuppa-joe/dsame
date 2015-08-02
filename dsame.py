@@ -120,8 +120,8 @@ def check_watch(watch_list, PSSCCC_list, event_list, EEE):
     else:
         return False
 
-def format_message(command, ORG='WXR', EEE='RWT',PSSCCC=[],TTTT='0030',JJJHHMM='0010000',STATION=None, TYPE=None, LLLLLLLL=None, COUNTRY='US', LANG='EN', **kwargs):
-    return command.format(ORG=ORG, EEE=EEE, TTTT=TTTT, JJJHHMM=JJJHHMM, STATION=STATION, TYPE=TYPE, LLLLLLLL=LLLLLLLL, COUNTRY=COUNTRY, LANG=LANG, event=get_event(EEE), end=fn_dt(alert_end(JJJHHMM,TTTT)), start=fn_dt(alert_start(JJJHHMM)), organization=defs.SAME__ORG[ORG]['NAME'][COUNTRY], PSSCCC='-'.join(PSSCCC), location=get_location(STATION, TYPE), date=fn_dt(datetime.datetime.now(),'%c'), length=get_length(TTTT), **kwargs)
+def format_message(command, ORG='WXR', EEE='RWT',PSSCCC=[],TTTT='0030',JJJHHMM='0010000', STATION=None, TYPE=None, LLLLLLLL=None, COUNTRY='US', LANG='EN', MESSAGE=None,**kwargs):
+    return command.format(ORG=ORG, EEE=EEE, TTTT=TTTT, JJJHHMM=JJJHHMM, STATION=STATION, TYPE=TYPE, LLLLLLLL=LLLLLLLL, COUNTRY=COUNTRY, LANG=LANG, event=get_event(EEE), end=fn_dt(alert_end(JJJHHMM,TTTT)), start=fn_dt(alert_start(JJJHHMM)), organization=defs.SAME__ORG[ORG]['NAME'][COUNTRY], PSSCCC='-'.join(PSSCCC), location=get_location(STATION, TYPE), date=fn_dt(datetime.datetime.now(),'%c'), length=get_length(TTTT), MESSAGE=MESSAGE, **kwargs)
        
 def readable_message(ORG='WXR',EEE='RWT',PSSCCC=[],TTTT='0030',JJJHHMM='0010000',STATION=None, TYPE=None, LLLLLLLL=None, COUNTRY='US', LANG='EN'):
     import textwrap
@@ -143,6 +143,7 @@ def readable_message(ORG='WXR',EEE='RWT',PSSCCC=[],TTTT='0030',JJJHHMM='0010000'
     for item in output:
         printf(item)
     printf()
+    return ''.join(MSG)
 
 def clean_msg(same):
     valid_chars=''.join([string.ascii_uppercase, string.digits, '+-/*'])
@@ -235,9 +236,9 @@ def same_decode(same, lang, same_watch=None, event_watch=None, text=True, call=N
         PSSCCC_list.sort()
         if check_watch(same_watch, PSSCCC_list, event_watch, EEE):
             if text:
-                readable_message(ORG, EEE, PSSCCC_list, TTTT, JJJHHMM, STATION, TYPE, LLLLLLLL, COUNTRY, lang)
+                MESSAGE=readable_message(ORG, EEE, PSSCCC_list, TTTT, JJJHHMM, STATION, TYPE, LLLLLLLL, COUNTRY, lang)
             if command:
-                f_cmd=format_message(command, ORG, EEE, PSSCCC_list, TTTT, JJJHHMM, STATION, TYPE, LLLLLLLL, COUNTRY, lang)
+                f_cmd=format_message(command, ORG, EEE, PSSCCC_list, TTTT, JJJHHMM, STATION, TYPE, LLLLLLLL, COUNTRY, lang, MESSAGE)
                 if call:
                     try:
                         subprocess.call([call, f_cmd], shell=True)
