@@ -16,21 +16,23 @@
   <body>
     <div class="wrapper">
       <header>
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<!-- XOYNQ-resp1 -->
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-7174864564677932"
-     data-ad-slot="1414729746"
-     data-ad-format="auto"></ins>
-<script>
-(adsbygoogle = window.adsbygoogle || []).push({});
-</script>
+        <h1 class="header">dsame</h1>
+        <p class="header">Python EAS SAME Alert Message Decoder </p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/cuppa-joe/dsame/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/cuppa-joe/dsame/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/cuppa-joe/dsame">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/cuppa-joe">cuppa-joe</a></p>
+
 
       </header>
       <section>
         <h1>
-<a id="dsame" class="anchor" href="#dsame" aria-hidden="true"><span class="octicon octicon-link"></span></a>dsame</h1>
+<a id="dsame" class="anchor" href="#dsame" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="https://dsame.xoynq.com">dsame</a>
+</h1>
 
 <p><strong>dsame</strong> is a program to decode <a href="http://en.wikipedia.org/wiki/Emergency_Alert_System">EAS</a>/<a href="http://en.wikipedia.org/wiki/Specific_Area_Message_Encoding">SAME</a> (Emergency Alert System/Specific Area Message Encoding) alert messages. These messages are primarily used by the National Weather Service for weather-related warnings. <strong>dsame</strong> will decode a demodulated message, filter by SAME (<a href="http://www.nws.noaa.gov/nwr/coverage/county_coverage.html">US</a>/<a href="http://www.ec.gc.ca/meteo-weather/default.asp?lang=En&amp;n=E5A4F19C-1">CA</a>) and/or event code, provide readable text, or run an external program.</p>
 
@@ -384,12 +386,12 @@
 </tbody>
 </table>
 
-<p>An alert must match one of each specified alert type in order to br processed. If an alert type is omitted, any alert will match that type. In most cases, using only SAME codes to filter alerts will be the best option.</p>
+<p>An alert must match one of each specified alert type in order to be processed. If an alert type is omitted, any alert will match that type. In most cases, using only SAME codes to filter alerts will be the best option.</p>
 
 <h3>
 <a id="external-commands" class="anchor" href="#external-commands" aria-hidden="true"><span class="octicon octicon-link"></span></a>External Commands</h3>
 
-<p>The <code>call</code> option runs an external program, script/batch file for each alert.  The <code>command</code> option defines the command string sent to that program, script or batch file, or to standard output if the <code>call</code> option is omitted. Be sure to include and escape quotation marks as needed. The following variables can be used in command strings.</p>
+<p>The <code>call</code> option runs an external program, script/batch file for each alert.  The <code>command</code> option defines the command string sent to that program, script or batch file, or to standard output if the <code>call</code> option is omitted. The following variables can be used in command strings.</p>
 
 <h4>
 <a id="command-variables" class="anchor" href="#command-variables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Command Variables</h4>
@@ -484,7 +486,7 @@
 <h3>
 <a id="sample-commands" class="anchor" href="#sample-commands" aria-hidden="true"><span class="octicon octicon-link"></span></a>Sample Commands</h3>
 
-<p>Decoding from a file using standard input:</p>
+<p>Decoding from a text file using standard input:</p>
 
 <p><code>cat zczc.txt | dsame.py --same 029165</code></p>
 
@@ -494,7 +496,7 @@
 
 <p>Call an external script with the event type and length:</p>
 
-<p><code>dsame.py --same 029165 --source source.sh --call alert.sh --command '\"{length}\" \"{event}\"'</code></p>
+<p><code>dsame.py --same 029165 --source source.sh --call alert.sh --command "{length}" "{event}"</code></p>
 
 <p>Decoding a message from the command line:</p>
 
@@ -504,12 +506,18 @@
 
 <p><code>dsame.py --source source.sh --no-text --command "ZCZC-{ORG}-{EEE}-{PSSCCC}+{TTTT}-{JJJHHMM}-{LLLLLLLL}-"</code></p>
 
+<p>Send an alert to a <a href="https://www.pushbullet.com">Pushbullet</a> channel:</p>
+
+<p><code>dsame.py --source source.sh --call pushbullet-channel.sh --command "{event}" "{MESSAGE}"</code></p>
+
 <h3>
 <a id="sample-text-output" class="anchor" href="#sample-text-output" aria-hidden="true"><span class="octicon octicon-link"></span></a>Sample Text Output</h3>
 
 <blockquote>
 <p>The National Weather Service in Pleasant Hill, Missouri has issued a Required Weekly Test valid until 12:30 PM for the following counties in Kansas: Leavenworth, Wyandotte, Johnson, Miami, and for the following counties in Missouri: Clay, Platte, Jackson, Cass. (KEAX/NWS)</p>
 </blockquote>
+
+<p>This <a href="https://www.pushbullet.com/channel?tag=xoynq-weather">experimental Pushbullet channel</a> is updated using dsame, multimon-ng and a rtl-sdr dongle on a Raspberry Pi B+.</p>
 
 <h3>
 <a id="known-issues" class="anchor" href="#known-issues" aria-hidden="true"><span class="octicon octicon-link"></span></a>Known Issues</h3>
@@ -519,14 +527,15 @@
 <li>A correct and complete list of ICAO location codes used by the National Weather Service messages is not available.</li>
 <li>Country detection may not be reliable for some locations with duplicate SAME codes.</li>
 <li>Date and time information may not be accurate when decoding old messages or messages from another time zone.</li>
-<li>Multimon-ng will not decode the same alert in succession. This should only be an issue during testing and can be avoided by alternating alerts.</li>
+<li>Multimon-ng will not decode the same alert in succession. This should only be an issue during testing and can be avoided by alternating test alerts.</li>
 </ul>
 
 <hr>
       </section>
       <footer>
-        <p></p>
-</div>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
     <!--[if !IE]><script>fixScale(document);</script><![endif]-->
 		
   </body>
