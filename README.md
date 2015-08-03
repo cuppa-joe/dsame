@@ -95,11 +95,11 @@ VOW | Volcano Warning              |WFA | Wild Fire Watch
 WFW | Wild Fire Warning            |WSA | Winter Storm Watch
 WSW | Winter Storm Warning         |    |
 
-An alert must match one of each specified alert type in order to br processed. If an alert type is omitted, any alert will match that type. In most cases, using only SAME codes to filter alerts will be the best option.
+An alert must match one of each specified alert type in order to be processed. If an alert type is omitted, any alert will match that type. In most cases, using only SAME codes to filter alerts will be the best option.
 
 ###External Commands
 
-The `call` option runs an external program, script/batch file for each alert.  The `command` option defines the command string sent to that program, script or batch file, or to standard output if the `call` option is omitted. Be sure to include and escape quotation marks as needed. The following variables can be used in command strings.
+The `call` option runs an external program, script/batch file for each alert.  The `command` option defines the command string sent to that program, script or batch file, or to standard output if the `call` option is omitted. The following variables can be used in command strings.
 
 ####Command Variables
 
@@ -121,9 +121,10 @@ Variable        | Description                       | Example
  {date}         | Local date                        | 04/15/15 12:00:38
  {MESSAGE}      | Readable message                  | *(See sample text output below)*
 
+
 ###Sample Commands
 
-Decoding from a file using standard input:
+Decoding from a text file using standard input:
 
 `cat zczc.txt | dsame.py --same 029165`
 
@@ -133,7 +134,7 @@ Using a source script to decode from standard input:
 
 Call an external script with the event type and length:
 
-`dsame.py --same 029165 --source source.sh --call alert.sh --command '\"{length}\" \"{event}\"'`
+`dsame.py --same 029165 --source source.sh --call alert.sh --command "{length}" "{event}"`
 
 Decoding a message from the command line:
 
@@ -142,6 +143,10 @@ Decoding a message from the command line:
 Print an encoded alert string, and omit the alert text:
 
 `dsame.py --source source.sh --no-text --command "ZCZC-{ORG}-{EEE}-{PSSCCC}+{TTTT}-{JJJHHMM}-{LLLLLLLL}-"`
+
+Send an alert to a Pushbullet channel:
+
+`dsame.py --source source.sh --call pushbullet-channel.sh --command "{event}" "{MESSAGE}"`
 
 ###Sample Text Output
 
