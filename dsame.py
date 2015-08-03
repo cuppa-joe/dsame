@@ -238,15 +238,18 @@ def same_decode(same, lang, same_watch=None, event_watch=None, text=True, call=N
             if text:
                 MESSAGE=readable_message(ORG, EEE, PSSCCC_list, TTTT, JJJHHMM, STATION, TYPE, LLLLLLLL, COUNTRY, lang)
             if command:
-                f_cmd=format_message(command, ORG, EEE, PSSCCC_list, TTTT, JJJHHMM, STATION, TYPE, LLLLLLLL, COUNTRY, lang, MESSAGE)
                 if call:
+                    l_cmd=[]
+                    for cmd in command:
+                        l_cmd.append(format_message(cmd, ORG, EEE, PSSCCC_list, TTTT, JJJHHMM, STATION, TYPE, LLLLLLLL, COUNTRY, lang, MESSAGE))
                     try:
-                        subprocess.call([call, f_cmd], shell=True)
+                        subprocess.call([call] + l_cmd)
                     except Exception as detail:
                         logging.error(detail)
                         return
                     pass
                 else:
+                    f_cmd=format_message(' '.join(command), ORG, EEE, PSSCCC_list, TTTT, JJJHHMM, STATION, TYPE, LLLLLLLL, COUNTRY, lang, MESSAGE)
                     printf(f_cmd)
     else:
         msgidx=same.find('NNNN')
@@ -266,7 +269,7 @@ def parse_arguments():
     parser.add_argument('--no-text', dest='text', action='store_false', help='disable readable message')
     parser.add_argument('--version', action='version', version=' '.join([defs.PROGRAM, defs.VERSION]),help='show version infomation and exit')
     parser.add_argument('--call', help='call external command')
-    parser.add_argument('--command', help='command message')
+    parser.add_argument('--command', nargs='*', help='command message')
     parser.add_argument('--source', help='source program')
     parser.set_defaults(text=True)
     args, unknown = parser.parse_known_args()
