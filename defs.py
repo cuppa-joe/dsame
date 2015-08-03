@@ -1,4 +1,4 @@
-VERSION = '0.1.0.0'
+VERSION = '0.1.2.0'
 PROGRAM = 'dsame'
 DESCRIPTION = 'dsame is a program to decode EAS/SAME alert messages'
 COPYRIGHT = 'Copyright (C) 2015 Joseph W. Metcalf'
