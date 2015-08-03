@@ -144,13 +144,15 @@ Print an encoded alert string, and omit the alert text:
 
 `dsame.py --source source.sh --no-text --command "ZCZC-{ORG}-{EEE}-{PSSCCC}+{TTTT}-{JJJHHMM}-{LLLLLLLL}-"`
 
-Send an alert to a Pushbullet channel:
+Send an alert to a [Pushbullet](https://www.pushbullet.com) channel:
 
 `dsame.py --source source.sh --call pushbullet-channel.sh --command "{event}" "{MESSAGE}"`
 
 ###Sample Text Output
 
 >The National Weather Service in Pleasant Hill, Missouri has issued a Required Weekly Test valid until 12:30 PM for the following counties in Kansas: Leavenworth, Wyandotte, Johnson, Miami, and for the following counties in Missouri: Clay, Platte, Jackson, Cass. (KEAX/NWS)
+
+This [experimental Pushbullet channel](https://www.pushbullet.com/channel?tag=xoynq-weather) is updated using dsame, multimon-ng and a rtl-sdr dongle on a Raspberry Pi B+.
 
 ###Known Issues
 
