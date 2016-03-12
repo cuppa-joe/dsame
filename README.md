@@ -115,6 +115,7 @@ Variable        | Description                       | Example
  {organization} | Organization name                 | National Weather Service
  {location}     | Originator location               | Pleasant Hill, Missouri
  {event}        | Event type                        | Required Weekly Test
+ {type}         | Event type indicator              | T
  {start}        | Start time                        | 12:00 PM
  {end}          | End time                          | 12:30 PM
  {length}       | Length of event                   | 30 minutes
@@ -152,7 +153,7 @@ Send an alert to a [Pushbullet](https://www.pushbullet.com) channel:
 
 >The National Weather Service in Pleasant Hill, Missouri has issued a Required Weekly Test valid until 12:30 PM for the following counties in Kansas: Leavenworth, Wyandotte, Johnson, Miami, and for the following counties in Missouri: Clay, Platte, Jackson, Cass. (KEAX/NWS)
 
-This [experimental Pushbullet channel](https://www.pushbullet.com/channel?tag=xoynq-weather) is updated using dsame, multimon-ng and a rtl-sdr dongle on a Raspberry Pi B+.
+This [experimental Pushbullet channel](https://www.pushbullet.com/channel?tag=xoynq-weather) is updated using dsame, multimon-ng and a rtl-sdr dongle on a Raspberry Pi 2.
 
 ###Known Issues
 

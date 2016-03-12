@@ -1,7 +1,7 @@
-VERSION = '0.1.2.0'
+VERSION = '0.1.3.0'
 PROGRAM = 'dsame'
 DESCRIPTION = 'dsame is a program to decode EAS/SAME alert messages'
-COPYRIGHT = 'Copyright (C) 2015 Joseph W. Metcalf'
+COPYRIGHT = 'Copyright (C) 2016 Joseph W. Metcalf'
 
 TEST_STRING = 'EAS: ZCZC-WXR-RWT-055027-055039-055047-055117-055131-055137-055139-055015-055071+0030-0771800-KMKX/NWS-'
 
@@ -5823,12 +5823,14 @@ SAME__ORG={
 }
 
 SAME_UEEE={
-    'W' : 'Unknown Warning',
-    'A' : 'Unknown Watch',
-    'E' : 'Unknown Emergency',
-    'S' : 'Unknown Statement',
-    'T' : 'Unknown Test',
-    'M' : 'Unknown Message',
+    'W' : 'Warning',
+    'A' : 'Watch',
+    'E' : 'Emergency',
+    'S' : 'Statement',
+    'T' : 'Test',
+    'M' : 'Message',
+    'R' : 'Warning',
+    'N' : 'Notification',
 }
 
 #SAME__EEE is a list of current and proposed event codes.

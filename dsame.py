@@ -84,9 +84,18 @@ def get_event(input):
     try:
         event=defs.SAME__EEE[input]
     except:
-        if input[2:] in 'WAESTM':
-            event=defs.SAME_UEEE[input[2:]]
+        if input[2:] in 'WAESTMN':
+            event=' '.join(['Unknown', defs.SAME_UEEE[input[2:]]])
     return event
+
+def get_indicator(input):
+    indicator=None
+    try:
+        if input[2:] in 'WAESTMNR':
+            indicator=input[2:]
+    except:
+        pass
+    return indicator
 
 def printf(output=''):   
     output=output.lstrip(' ')
@@ -121,7 +130,7 @@ def check_watch(watch_list, PSSCCC_list, event_list, EEE):
         return False
 
 def format_message(command, ORG='WXR', EEE='RWT',PSSCCC=[],TTTT='0030',JJJHHMM='0010000', STATION=None, TYPE=None, LLLLLLLL=None, COUNTRY='US', LANG='EN', MESSAGE=None,**kwargs):
-    return command.format(ORG=ORG, EEE=EEE, TTTT=TTTT, JJJHHMM=JJJHHMM, STATION=STATION, TYPE=TYPE, LLLLLLLL=LLLLLLLL, COUNTRY=COUNTRY, LANG=LANG, event=get_event(EEE), end=fn_dt(alert_end(JJJHHMM,TTTT)), start=fn_dt(alert_start(JJJHHMM)), organization=defs.SAME__ORG[ORG]['NAME'][COUNTRY], PSSCCC='-'.join(PSSCCC), location=get_location(STATION, TYPE), date=fn_dt(datetime.datetime.now(),'%c'), length=get_length(TTTT), MESSAGE=MESSAGE, **kwargs)
+    return command.format(ORG=ORG, EEE=EEE, TTTT=TTTT, JJJHHMM=JJJHHMM, STATION=STATION, TYPE=TYPE, LLLLLLLL=LLLLLLLL, COUNTRY=COUNTRY, LANG=LANG, event=get_event(EEE), type=get_indicator(EEE), end=fn_dt(alert_end(JJJHHMM,TTTT)), start=fn_dt(alert_start(JJJHHMM)), organization=defs.SAME__ORG[ORG]['NAME'][COUNTRY], PSSCCC='-'.join(PSSCCC), location=get_location(STATION, TYPE), date=fn_dt(datetime.datetime.now(),'%c'), length=get_length(TTTT), MESSAGE=MESSAGE, **kwargs)
        
 def readable_message(ORG='WXR',EEE='RWT',PSSCCC=[],TTTT='0030',JJJHHMM='0010000',STATION=None, TYPE=None, LLLLLLLL=None, COUNTRY='US', LANG='EN'):
     import textwrap
