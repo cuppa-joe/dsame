@@ -1,6 +1,6 @@
-#!/usr/bin/env python
+3#!/usr/bin/env python
 #
-# Copyright (C) 2015 Joseph W. Metcalf
+# Copyright (C) 2016 Joseph W. Metcalf
 #
 # Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby 
 # granted, provided that the above copyright notice and this permission notice appear in all copies.
@@ -107,6 +107,10 @@ def alert_end(JJJHHMM, TTTT):
     delta = datetime.timedelta(hours = int(TTTT[:2]), minutes=int(TTTT[2:]))
     return alertstart + delta
 
+def alert_length(TTTT):
+    delta = datetime.timedelta(hours = int(TTTT[:2]), minutes=int(TTTT[2:]))
+    return delta.seconds
+
 def get_location(STATION=None, TYPE=None): 
     location=''
     if TYPE=='NWS':
@@ -130,7 +134,7 @@ def check_watch(watch_list, PSSCCC_list, event_list, EEE):
         return False
 
 def format_message(command, ORG='WXR', EEE='RWT',PSSCCC=[],TTTT='0030',JJJHHMM='0010000', STATION=None, TYPE=None, LLLLLLLL=None, COUNTRY='US', LANG='EN', MESSAGE=None,**kwargs):
-    return command.format(ORG=ORG, EEE=EEE, TTTT=TTTT, JJJHHMM=JJJHHMM, STATION=STATION, TYPE=TYPE, LLLLLLLL=LLLLLLLL, COUNTRY=COUNTRY, LANG=LANG, event=get_event(EEE), type=get_indicator(EEE), end=fn_dt(alert_end(JJJHHMM,TTTT)), start=fn_dt(alert_start(JJJHHMM)), organization=defs.SAME__ORG[ORG]['NAME'][COUNTRY], PSSCCC='-'.join(PSSCCC), location=get_location(STATION, TYPE), date=fn_dt(datetime.datetime.now(),'%c'), length=get_length(TTTT), MESSAGE=MESSAGE, **kwargs)
+    return command.format(ORG=ORG, EEE=EEE, TTTT=TTTT, JJJHHMM=JJJHHMM, STATION=STATION, TYPE=TYPE, LLLLLLLL=LLLLLLLL, COUNTRY=COUNTRY, LANG=LANG, event=get_event(EEE), type=get_indicator(EEE), end=fn_dt(alert_end(JJJHHMM,TTTT)), start=fn_dt(alert_start(JJJHHMM)), organization=defs.SAME__ORG[ORG]['NAME'][COUNTRY], PSSCCC='-'.join(PSSCCC), location=get_location(STATION, TYPE), date=fn_dt(datetime.datetime.now(),'%c'), length=get_length(TTTT), seconds=alert_length(TTTT), MESSAGE=MESSAGE, **kwargs)
        
 def readable_message(ORG='WXR',EEE='RWT',PSSCCC=[],TTTT='0030',JJJHHMM='0010000',STATION=None, TYPE=None, LLLLLLLL=None, COUNTRY='US', LANG='EN'):
     import textwrap

@@ -119,6 +119,7 @@ Variable        | Description                       | Example
  {start}        | Start time                        | 12:00 PM
  {end}          | End time                          | 12:30 PM
  {length}       | Length of event                   | 30 minutes
+ {seconds}      | Event length in seconds           | 1800 
  {date}         | Local date                        | 04/15/15 12:00:38
  {MESSAGE}      | Readable message                  | *(See sample text output below)*
 
