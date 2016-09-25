@@ -133,9 +133,12 @@ def check_watch(watch_list, PSSCCC_list, event_list, EEE):
     else:
         return False
 
+def kwdict(**kwargs):
+    return kwargs
+
 def format_message(command, ORG='WXR', EEE='RWT',PSSCCC=[],TTTT='0030',JJJHHMM='0010000', STATION=None, TYPE=None, LLLLLLLL=None, COUNTRY='US', LANG='EN', MESSAGE=None,**kwargs):
     return command.format(ORG=ORG, EEE=EEE, TTTT=TTTT, JJJHHMM=JJJHHMM, STATION=STATION, TYPE=TYPE, LLLLLLLL=LLLLLLLL, COUNTRY=COUNTRY, LANG=LANG, event=get_event(EEE), type=get_indicator(EEE), end=fn_dt(alert_end(JJJHHMM,TTTT)), start=fn_dt(alert_start(JJJHHMM)), organization=defs.SAME__ORG[ORG]['NAME'][COUNTRY], PSSCCC='-'.join(PSSCCC), location=get_location(STATION, TYPE), date=fn_dt(datetime.datetime.now(),'%c'), length=get_length(TTTT), seconds=alert_length(TTTT), MESSAGE=MESSAGE, **kwargs)
-       
+ 
 def readable_message(ORG='WXR',EEE='RWT',PSSCCC=[],TTTT='0030',JJJHHMM='0010000',STATION=None, TYPE=None, LLLLLLLL=None, COUNTRY='US', LANG='EN'):
     import textwrap
     printf()
@@ -172,11 +175,10 @@ def clean_msg(same):
         offset = slen-ridx
         if (offset <= 8):
             same=''.join([same.ljust(slen+(8-offset)+1,'?'), '-'])      # Add final dash and/or pad location field
-            
-    
+              
     return same
    
-def same_decode(same, lang, same_watch=None, event_watch=None, text=True, call=None, command=None):
+def same_decode(same, lang, same_watch=None, event_watch=None, text=True, call=None, command=None, jsonfile=None):
     try:
         same = clean_msg(same)
     except:
@@ -250,6 +252,17 @@ def same_decode(same, lang, same_watch=None, event_watch=None, text=True, call=N
         if check_watch(same_watch, PSSCCC_list, event_watch, EEE):
             if text:
                 MESSAGE=readable_message(ORG, EEE, PSSCCC_list, TTTT, JJJHHMM, STATION, TYPE, LLLLLLLL, COUNTRY, lang)
+            else:
+                MESSAGE=None
+            if jsonfile:
+                try:
+                    import json
+                    data=kwdict(ORG=ORG, EEE=EEE, TTTT=TTTT, JJJHHMM=JJJHHMM, STATION=STATION, TYPE=TYPE, LLLLLLLL=LLLLLLLL, COUNTRY=COUNTRY, LANG=lang, event=get_event(EEE), type=get_indicator(EEE), end=fn_dt(alert_end(JJJHHMM,TTTT)), start=fn_dt(alert_start(JJJHHMM)), organization=defs.SAME__ORG[ORG]['NAME'][COUNTRY], PSSCCC=PSSCCC, PSSCCC_list=PSSCCC_list, location=get_location(STATION, TYPE), date=fn_dt(datetime.datetime.now(),'%c'), length=get_length(TTTT), seconds=alert_length(TTTT), MESSAGE=MESSAGE)
+                    with open(jsonfile, 'w') as outfile:
+                        json.dump(data, outfile)               
+                except Exception as detail:
+                        logging.error(detail)
+                        return           
             if command:
                 if call:
                     l_cmd=[]
@@ -283,6 +296,7 @@ def parse_arguments():
     parser.add_argument('--version', action='version', version=' '.join([defs.PROGRAM, defs.VERSION]),help='show version infomation and exit')
     parser.add_argument('--call', help='call external command')
     parser.add_argument('--command', nargs='*', help='command message')
+    parser.add_argument('--json', help='write to json file')
     parser.add_argument('--source', help='source program')
     parser.set_defaults(text=True)
     args, unknown = parser.parse_known_args()
@@ -292,7 +306,7 @@ def main():
     args=parse_arguments()
     logging.basicConfig(level=args.loglevel,format='%(levelname)s: %(message)s')
     if args.msg:
-        same_decode(args.msg, args.lang, same_watch=args.same, event_watch=args.event, text=args.text, call=args.call, command=args.command)
+        same_decode(args.msg, args.lang, same_watch=args.same, event_watch=args.event, text=args.text, call=args.call, command=args.command, jsonfile=args.json)
     elif args.source:
         try:
             source_process = subprocess.Popen(args.source, stdout=subprocess.PIPE)
@@ -303,12 +317,12 @@ def main():
             line = source_process.stdout.readline()
             if line:
                 logging.debug(line)
-                same_decode(line, args.lang, same_watch=args.same, event_watch=args.event, text=args.text, call=args.call, command=args.command)
+                same_decode(line, args.lang, same_watch=args.same, event_watch=args.event, text=args.text, call=args.call, command=args.command, jsonfile=args.json)
     else:
         while True:
             for line in sys.stdin:
                 logging.debug(line)
-                same_decode(line, args.lang, same_watch=args.same, event_watch=args.event, text=args.text, call=args.call, command=args.command)
+                same_decode(line, args.lang, same_watch=args.same, event_watch=args.event, text=args.text, call=args.call, command=args.command, jsonfile=args.json)
 
 
 if __name__ == "__main__":
