@@ -1,0 +1,11 @@
+[Unit]
+Description=dsame
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/screen -d -m -S dsame /home/USERNAME/dsame.sh
+ExecStop=/usr/bin/killall -p -w -s 2 dsame.sh
+WorkingDirectory=/home/USERNAME
+
+[Install]
+WantedBy=multi-user.target
