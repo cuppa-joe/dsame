@@ -179,110 +179,123 @@ def clean_msg(same):
     return same
    
 def same_decode(same, lang, same_watch=None, event_watch=None, text=True, call=None, command=None, jsonfile=None):
-    try:
-        same = clean_msg(same)
-    except:
-        return
-    msgidx=same.find('ZCZC')
-    if msgidx != -1:
-        logging.debug('-' * 30)
-        logging.debug(' '.join(['    Identifer found >','ZCZC']))
-        S1, S2 = None, None
+    while len(same):
+        tail=same
         try:
-            S1,S2=same[msgidx:].split('+')
+            same = clean_msg(same)
         except:
-            format_error()
-            return           
-        try:
-            ZCZC, ORG, EEE, PSSCCC=S1.split('-',3)
-        except:
-            format_error()
             return
-        logging.debug(' '.join(['   Originator found >',ORG]))
-        logging.debug(' '.join(['   Event Code found >',EEE]))
-        try:
-            PSSCCC_list=PSSCCC.split('-')
-        except:
-            format_error()
-        
-        try:
-            TTTT,JJJHHMM,LLLLLLLL,tail=S2.split('-')
-        except:
-            format_error()
-            return
-        logging.debug(' '.join(['   Purge Time found >',TTTT]))
-        logging.debug(' '.join(['    Date Code found >',JJJHHMM]))
-        logging.debug(' '.join(['Location Code found >',LLLLLLLL]))
-        try:
-            STATION, TYPE=LLLLLLLL.split('/',1)
-        except:
-            STATION, TYPE= None, None
-            format_error()
-        logging.debug(' '.join(['   SAME Codes found >',str(len(PSSCCC_list))]))
-        US_bad_list=[]
-        CA_bad_list=[]
-        for code in PSSCCC_list:
+        msgidx=same.find('ZCZC')
+        endidx=same.find('NNNN')
+        if msgidx != -1 and (endidx == -1 or endidx > msgidx):
+            # New message
+            logging.debug('-' * 30)
+            logging.debug(' '.join(['    Identifer found >','ZCZC']))
+            S1, S2 = None, None
             try:
-                county=defs.US_SAME_CODE[code[1:]]
-            except KeyError:
-                US_bad_list.append(code)
+                S1,S2=same[msgidx:].split('+',1)
+            except:
+                format_error()
+                return
             try:
-                county=defs.CA_SAME_CODE[code[1:]]
-            except KeyError:
-                CA_bad_list.append(code)
-        if len(US_bad_list) < len(CA_bad_list):
-            COUNTRY='US'
-        if len(US_bad_list) > len(CA_bad_list):
-            COUNTRY='CA'
-        if len(US_bad_list) == len(CA_bad_list):
-            if type=='CA':
-                COUNTRY='CA'
-            else:
-                COUNTRY='US'
-        if COUNTRY=='CA':
-            bad_list=CA_bad_list
-        else:
-            bad_list=US_bad_list
-        logging.debug(' '.join(['Invalid Codes found >',str(len(bad_list))]))
-        logging.debug(' '.join(['            Country >',COUNTRY]))
-        logging.debug('-' * 30)
-        for code in bad_list:
-            PSSCCC_list.remove(code)
-        PSSCCC_list.sort()
-        if check_watch(same_watch, PSSCCC_list, event_watch, EEE):
-            if text:
-                MESSAGE=readable_message(ORG, EEE, PSSCCC_list, TTTT, JJJHHMM, STATION, TYPE, LLLLLLLL, COUNTRY, lang)
-            else:
-                MESSAGE=None
-            if jsonfile:
+                ZCZC, ORG, EEE, PSSCCC=S1.split('-',3)
+            except:
+                format_error()
+                return
+            logging.debug(' '.join(['   Originator found >',ORG]))
+            logging.debug(' '.join(['   Event Code found >',EEE]))
+            try:
+                PSSCCC_list=PSSCCC.split('-')
+            except:
+                format_error()
+
+            try:
+                TTTT,JJJHHMM,LLLLLLLL,tail=S2.split('-',3)
+            except:
+                format_error()
+                return
+            logging.debug(' '.join(['   Purge Time found >',TTTT]))
+            logging.debug(' '.join(['    Date Code found >',JJJHHMM]))
+            logging.debug(' '.join(['Location Code found >',LLLLLLLL]))
+            try:
+                STATION, TYPE=LLLLLLLL.split('/')
+            except ValueError:
+                # Station doesn't have to have a /
+                STATION=LLLLLLLL
+                TYPE=None
+                pass
+            except:
+                STATION, TYPE= None, None
+                format_error()
+            logging.debug(' '.join(['   SAME Codes found >',str(len(PSSCCC_list))]))
+            US_bad_list=[]
+            CA_bad_list=[]
+            for code in PSSCCC_list:
                 try:
-                    import json
-                    data=kwdict(ORG=ORG, EEE=EEE, TTTT=TTTT, JJJHHMM=JJJHHMM, STATION=STATION, TYPE=TYPE, LLLLLLLL=LLLLLLLL, COUNTRY=COUNTRY, LANG=lang, event=get_event(EEE), type=get_indicator(EEE), end=fn_dt(alert_end(JJJHHMM,TTTT)), start=fn_dt(alert_start(JJJHHMM)), organization=defs.SAME__ORG[ORG]['NAME'][COUNTRY], PSSCCC=PSSCCC, PSSCCC_list=PSSCCC_list, location=get_location(STATION, TYPE), date=fn_dt(datetime.datetime.now(),'%c'), length=get_length(TTTT), seconds=alert_length(TTTT), MESSAGE=MESSAGE)
-                    with open(jsonfile, 'w') as outfile:
-                        json.dump(data, outfile)               
-                except Exception as detail:
-                        logging.error(detail)
-                        return           
-            if command:
-                if call:
-                    l_cmd=[]
-                    for cmd in command:
-                        l_cmd.append(format_message(cmd, ORG, EEE, PSSCCC_list, TTTT, JJJHHMM, STATION, TYPE, LLLLLLLL, COUNTRY, lang, MESSAGE))
-                    try:
-                        subprocess.call([call] + l_cmd)
-                    except Exception as detail:
-                        logging.error(detail)
-                        return
-                    pass
+                    county=defs.US_SAME_CODE[code[1:]]
+                except KeyError:
+                    US_bad_list.append(code)
+                try:
+                    county=defs.CA_SAME_CODE[code[1:]]
+                except KeyError:
+                    CA_bad_list.append(code)
+            if len(US_bad_list) < len(CA_bad_list):
+                COUNTRY='US'
+            if len(US_bad_list) > len(CA_bad_list):
+                COUNTRY='CA'
+            if len(US_bad_list) == len(CA_bad_list):
+                if type=='CA':
+                    COUNTRY='CA'
                 else:
-                    f_cmd=format_message(' '.join(command), ORG, EEE, PSSCCC_list, TTTT, JJJHHMM, STATION, TYPE, LLLLLLLL, COUNTRY, lang, MESSAGE)
-                    printf(f_cmd)
-    else:
-        msgidx=same.find('NNNN')
-        if msgidx == -1:
-            logging.warning('Valid identifer not found.')
+                    COUNTRY='US'
+            if COUNTRY=='CA':
+                bad_list=CA_bad_list
+            else:
+                bad_list=US_bad_list
+            logging.debug(' '.join(['Invalid Codes found >',str(len(bad_list)),', '.join(bad_list)]))
+            logging.debug(' '.join(['            Country >',COUNTRY]))
+            logging.debug('-' * 30)
+            for code in bad_list:
+                PSSCCC_list.remove(code)
+            PSSCCC_list.sort()
+            if check_watch(same_watch, PSSCCC_list, event_watch, EEE):
+                if text:
+                    MESSAGE=readable_message(ORG, EEE, PSSCCC_list, TTTT, JJJHHMM, STATION, TYPE, LLLLLLLL, COUNTRY, lang)
+                else:
+                    MESSAGE=None
+                if jsonfile:
+                    try:
+                        import json
+                        data=kwdict(ORG=ORG, EEE=EEE, TTTT=TTTT, JJJHHMM=JJJHHMM, STATION=STATION, TYPE=TYPE, LLLLLLLL=LLLLLLLL, COUNTRY=COUNTRY, LANG=lang, event=get_event(EEE), type=get_indicator(EEE), end=fn_dt(alert_end(JJJHHMM,TTTT)), start=fn_dt(alert_start(JJJHHMM)), organization=defs.SAME__ORG[ORG]['NAME'][COUNTRY], PSSCCC=PSSCCC, PSSCCC_list=PSSCCC_list, location=get_location(STATION, TYPE), date=fn_dt(datetime.datetime.now(),'%c'), length=get_length(TTTT), seconds=alert_length(TTTT), MESSAGE=MESSAGE)
+                        with open(jsonfile, 'w') as outfile:
+                            json.dump(data, outfile)
+                    except Exception as detail:
+                            logging.error(detail)
+                            return
+                if command:
+                    if call:
+                        l_cmd=[]
+                        for cmd in command:
+                            l_cmd.append(format_message(cmd, ORG, EEE, PSSCCC_list, TTTT, JJJHHMM, STATION, TYPE, LLLLLLLL, COUNTRY, lang, MESSAGE))
+                        try:
+                            subprocess.call([call] + l_cmd)
+                        except Exception as detail:
+                            logging.error(detail)
+                            return
+                        pass
+                    else:
+                        f_cmd=format_message(' '.join(command), ORG, EEE, PSSCCC_list, TTTT, JJJHHMM, STATION, TYPE, LLLLLLLL, COUNTRY, lang, MESSAGE)
+                        printf(f_cmd)
         else:
-            logging.debug(' '.join(['End of Message found >','NNNN',str(msgidx)]))
+            if endidx == -1:
+                logging.warning('Valid identifer not found.')
+                return
+            else:
+                logging.debug(' '.join(['End of Message found >','NNNN',str(msgidx)]))
+                tail=same[msgidx:+len(NNNN)]
+
+        # Move ahead and look for more
+        same=tail
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description=defs.DESCRIPTION, prog=defs.PROGRAM,  fromfile_prefix_chars='@')
