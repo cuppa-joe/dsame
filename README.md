@@ -3,13 +3,13 @@
 
 **DO NOT RELY ON THIS PROGRAM WHEN LOSS, DAMAGE, INJURY OR DEATH MAY OCCUR!**
 
-###Requirements
+### Requirements
 
 * [Python](https://www.python.org/) 2.7+
 * A [weather radio](www.nws.noaa.gov/nwr/), [RTL-SDR](http://www.rtl-sdr.com/about-rtl-sdr/) or other receiving/source device
 * A demodulator, such as [multimon-ng](https://github.com/EliasOenal/multimon-ng/) ([Windows binaries](https://github.com/cuppa-joe/multimon-ng/releases))
 
-###Installation
+### Installation
 
 For Microsoft Windows, **dsame** is distributed as a self-extracting installer, and downloads for 64-bit and 32-bit systems are available. Run the installer to install the program and optionally multimon-ng and/or rtl_fm.
 
@@ -17,7 +17,7 @@ For Linux and similar systems, **dsame** is available as a compressed (tar.gz or
 
 Check [here](https://github.com/cuppa-joe/dsame/releases/latest) to download the latest release.
 
-###Command Line Options
+### Command Line Options
 
 ```
 usage: dsame [-h] [--msg MSG] [--same [SAME [SAME ...]]]
@@ -25,7 +25,7 @@ usage: dsame [-h] [--msg MSG] [--same [SAME [SAME ...]]]
              [--loglevel {10,20,30,40,50}] [--text] [--no-text] [--version]
              [--call CALL] [--command COMMAND] [--source SOURCE]
 ```
-####Options
+#### Options
 
 Option            | Description                                                           | Example
 :-----------------|:----------------------------------------------------------------------|:----------------------
@@ -38,19 +38,19 @@ Option            | Description                                                 
 `command`         | External command line. Omit --call to send to standard output         | `--command "Event Code: {EEE}"`
 `source`          | Source script/program. See /scripts for examples                      | `--source source.sh`
 
-###Usage
+### Usage
 
 **dsame** can decode EAS messages from the command line, directly from the output of an external command, or by capturing the ouput of a shell script/batch file or external program. Use `msg` for command line decoding. The `source` command is used to capture and decode the output of a script or program. Without one of these options, standard input is used. Press `CTRL-C` to exit the program.
 
-####Source Scripts
+#### Source Scripts
 
 Several sample source scripts and Windows batch files are provided in the `scripts` directory. If you are using a RTL-SDR device, edit the script to set the frequency, receiver gain and PPM error rate.
 
-###Filtering Alerts
+### Filtering Alerts
 
 There are two comands used to filter alerts. None, one or both can be specified. The `same` command is a list of SAME area codes ([United States](http://www.nws.noaa.gov/nwr/coverage/county_coverage.html)/[Canada](http://www.ec.gc.ca/meteo-weather/default.asp?lang=En&n=E5A4F19C-1)), and the `event` command is a list of event codes to monitor.
 
-####Event Codes
+#### Event Codes
 
 *This list includes current and proposed event codes.*
 
@@ -97,11 +97,11 @@ WSW | Winter Storm Warning         |    |
 
 An alert must match one of each specified alert type in order to be processed. If an alert type is omitted, any alert will match that type. In most cases, using only SAME codes to filter alerts will be the best option.
 
-###External Commands
+### External Commands
 
 The `call` option runs an external program, script/batch file for each alert.  The `command` option defines the command string sent to that program, script or batch file, or to standard output if the `call` option is omitted. The following variables can be used in command strings.
 
-####Command Variables
+#### Command Variables
 
 Variable        | Description                       | Example
 :---------------|:----------------------------------|:------------------
@@ -124,7 +124,7 @@ Variable        | Description                       | Example
  {MESSAGE}      | Readable message                  | *(See sample text output below)*
 
 
-###Sample Commands
+### Sample Commands
 
 Decoding from a text file using standard input:
 
@@ -150,13 +150,13 @@ Send an alert to a [Pushbullet](https://www.pushbullet.com) channel:
 
 `dsame.py --source source.sh --call pushbullet-channel.sh --command "{event}" "{MESSAGE}"`
 
-###Sample Text Output
+### Sample Text Output
 
 >The National Weather Service in Pleasant Hill, Missouri has issued a Required Weekly Test valid until 12:30 PM for the following counties in Kansas: Leavenworth, Wyandotte, Johnson, Miami, and for the following counties in Missouri: Clay, Platte, Jackson, Cass. (KEAX/NWS)
 
 This [experimental Pushbullet channel](https://www.pushbullet.com/channel?tag=xoynq-weather) is updated using dsame, multimon-ng and a rtl-sdr dongle on a Raspberry Pi 2.
 
-###Known Issues
+### Known Issues
 
 * SASMEX/SARMEX, a Mexican system for seismic alerts, is not implemented due to lack of documentation.
 * A correct and complete list of ICAO location codes used by the National Weather Service messages is not available.

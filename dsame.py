@@ -115,7 +115,7 @@ def get_location(STATION=None, TYPE=None):
     location=''
     if TYPE=='NWS':
         try:
-            location=defs.ICAO_LIST[STATION].title()
+            location=defs.WFO_LIST[STATION]
         except:
             pass
     return location
