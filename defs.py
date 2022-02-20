@@ -5870,7 +5870,7 @@ SAME__EEE={
     'FLS' : 'Flood Statement',
     'FLW' : 'Flood Warning',
     'FRW' : 'Fire Warning',
-    'FSW' :	'Flash Freeze Warning',
+    'FSW' : 'Flash Freeze Warning',
     'FZW' : 'Freeze Warning',
     'HLS' : 'Hurricane Local Statement',
     'HLS' : 'Hurricane Statement',
